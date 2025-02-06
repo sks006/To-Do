@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-eval' https://your-cdn.example.com;">
     <title>To-Do List App</title>
     <link rel="stylesheet" href="styles.css">
-    <script defer src="script.js"></script>
+    <script type="module" src="script.js" defer></script>
+
 </head>
 <body>
     <header>
@@ -23,6 +25,7 @@
                 <input type="date" id="task-due-date" required>
                 <textarea id="task-notes" placeholder="Notes (optional)"></textarea>
                 <button type="submit" class="btn-primary">Add Task</button>
+                <button type="button" class="generate-btn">generate PDF</button>
             </form>
         </section>
 

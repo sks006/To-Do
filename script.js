@@ -1,14 +1,17 @@
 /** @format */
 
-const taskFrom = document.getElementById("new-task-form");
+const taskForm = document.getElementById("new-task-form");
 const shortTermTasks = document.querySelector("#short-term-tasks .task-list");
 const longTermTasks = document.querySelector("#long-term-tasks .task-list");
 
-const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+let tasks = JSON.parse(localStorage.getItem("taskManager_tasks")) || [];
 
 function saveTasks() {
-     localStorage.setItem("task", JSON.stringify(tasks));
+     localStorage.setItem("taskManager_tasks", JSON.stringify(tasks));
 }
+
+
+
 
 function renderTasks() {
      shortTermTasks.innerHTML = "";
@@ -17,15 +20,17 @@ function renderTasks() {
      tasks.forEach((task) => {
           const taskElement = document.createElement("div");
           taskElement.className = "task";
-          taskElement.innerHTML = `  <span>${task.name} - <em>${
-               task.category
-          }</em> - ${getRemainingTime(task.dueDate)}</span> 
-                 <div>
-                <button onclick="editTask(${task.id})">Edit</button>
-                <button onclick="deleteTask(${task.id})">Delete</button>
+          taskElement.dataset.taskId = task.id;
+
+          taskElement.innerHTML = `
+            <span>${task.name} - <em>${task.category}</em> - ${getRemainingTime(
+               task.dueDate,
+          )}</span>
+            <div>
+                 <button>Edit</button>
+                <button>Delete</button>
             </div>
-               
-               `;
+        `;
 
           if (task.completed) {
                taskElement.classList.add("completed");
@@ -40,6 +45,26 @@ function renderTasks() {
           }
      });
 }
+
+document.querySelectorAll(".task-list").forEach((list) => {
+     list.addEventListener("click", (e) => {
+          // Handle text node clicks
+          const target =
+               e.target.nodeType === 3 ? e.target.parentElement : e.target;
+          const button = target.closest("button");
+          if (!button) return;
+
+          const taskElement = button.closest(".task");
+          const taskId = parseInt(taskElement.dataset.taskId);
+
+          // Trim whitespace for accurate comparison
+          if (button.textContent.trim() === "Edit") {
+               editTask(taskId);
+          } else if (button.textContent.trim() === "Delete") {
+               deleteTask(taskId);
+          }
+     });
+});
 function addTask(event) {
      event.preventDefault();
      const name = document.getElementById("task-name").value;
@@ -59,23 +84,40 @@ function addTask(event) {
      tasks.push(newTask);
      saveTasks();
      renderTasks();
-     taskFrom.reset();
+     taskForm.reset();
 }
+
 function deleteTask(id) {
      const index = tasks.findIndex((task) => task.id === id);
-     tasks.splice(index, 1);
-     saveTasks();
-     renderTasks();
+     if (index !== -1) {
+          tasks.splice(index, 1);
+          saveTasks();
+          renderTasks();
+     }
 }
 
 function editTask(id) {
      const task = tasks.find((task) => task.id === id);
-     document.getElementById("task-name").value = task.name;
-     document.getElementById("task-category").value = task.category;
-     document.getElementById("task-due-date").value = task.dueDate;
-     document.getElementById("task-notes").value = task.notes;
+     if (task) {
+          document.getElementById("task-name").value = task.name;
+          document.getElementById("task-category").value = task.category;
+          document.getElementById("task-due-date").value = task.dueDate;
+          document.getElementById("task-notes").value = task.notes;
 
-     deleteTask(id);
+       
+          taskForm.onsubmit = function (event) {
+               event.preventDefault();
+               task.name = document.getElementById("task-name").value;
+               task.category = document.getElementById("task-category").value;
+               task.dueDate = document.getElementById("task-due-date").value;
+               task.notes = document.getElementById("task-notes").value;
+
+               saveTasks();
+               renderTasks();
+               taskForm.reset();
+               taskForm.onsubmit = addTask; 
+          };
+     }
 }
 
 function getRemainingTime(dueDate) {
@@ -94,6 +136,17 @@ function getRemainingTime(dueDate) {
      return `${hours} hours left`;
 }
 
-taskFrom.addEventListener("submit", addTask);
+taskForm.onsubmit = function (event) {
+     event.preventDefault();
+     tasks.name = document.getElementById("task-name").value;
+     tasks.category = document.getElementById("task-category").value;
+     tasks.dueDate = document.getElementById("task-due-date").value;
+     tasks.notes = document.getElementById("task-notes").value;
+
+     saveTasks();
+     renderTasks();
+     taskForm.reset();
+     taskForm.onsubmit = addTask; // Reset handler
+};
 
 renderTasks();

@@ -3,69 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="script.js"></script>
-    <title>To-Do</title>
+    <title>To-Do List App</title>
+    <link rel="stylesheet" href="styles.css">
+    <script defer src="script.js"></script>
 </head>
-<body class="bg-gray-100 min-h-sceen">
-    <div class="container mx-auto px-4 py-8">
-        <h1 class="text-2xl/7 font-bold text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">Smart Todo-List</h1>
+<body>
+    <header>
+        <h1>To-Do List App</h1>
+    </header>
+    <main>
+        <section id="task-form">
+            <h2>Add New Task</h2>
+            <form id="new-task-form">
+                <input type="text" id="task-name" placeholder="Task Name" required>
+                <select id="task-category">
+                    <option value="1-Day to 7-Day">1-Day to 7-Day</option>
+                    <option value="1-6 Month">1-6 Month</option>
+                </select>
+                <input type="date" id="task-due-date" required>
+                <textarea id="task-notes" placeholder="Notes (optional)"></textarea>
+                <button type="submit" class="btn-primary">Add Task</button>
+            </form>
+        </section>
 
-        <!-- Input Form --> 
-       <div class="bg-white rounded shadow-md p-6 mb-8">
-         <form id="taksform" name="space-y-4">
-            <div>
-                <label class="block text-gray-900 mb-2 ">Task Name</label>
-
-                    <input type="text" id="taskName" required
-                        class="w-full p-2 border rounded-md">
+        <section id="tasks" class="task-container">
+            <div id="short-term-tasks" class="task-category">
+                <h2>1-Day to 7-Day Tasks</h2>
+                <div class="task-list"></div>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-gray-700 mb-2">Category</label>
-                     <select id="taskCategory" class="w-full p-2 border rounded-md">
-                            <option value="1-Day">1-7 Days</option>
-                            <option value="6-Month">1-6 Months</option>
-                        </select>
-                </div>
-              <div>
-                  <label class="block text-gray-700 mb-2">Due Data</label>
-                   <input type="datetime-local" id="dueDate" required
-                            class="w-full p-2 border rounded-md">
-              </div>
+            <div id="long-term-tasks" class="task-category">
+                <h2>1-6 Month Goals</h2>
+                <div class="task-list"></div>
             </div>
-                <div>
-                    <label class="block text-gray-700 mb-2">Notes</label>
-                    <textarea id="taskNotes" 
-                        class="w-full p-2 border rounded-md"></textarea>
-                </div>
-                <button type="submit" 
-                    class="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600">
-                    Add Task
-                </button>
-        </form>
-       </div>
-
-       <!-- Task List -->
-        <div  class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Short term Task-->
-             <div class="bg-white rounded-lg shadow-md p-6">
-                <h2 class="text-2xl font-semibold mb-4 text-blue-500">1-7 Day Tasks</h2>
-                <div id="shortTermTasks" class="space-y-4"></div>
-            </div>
-              <!-- Long-term Goals -->
-            <div class="bg-white rounded-lg shadow-md p-6">
-                <h2 class="text-2xl font-semibold mb-4 text-green-500">1-6 Month Goals</h2>
-                <div id="longTermTasks" class="space-y-4"></div>
-            </div>
-                <!-- Edit Modal -->
-
-       <div id="editModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-        <div class="bg-white rounded-lg p-6 w-96">
-            <!-- Edit form will be injected here -->
-        </div>
-    </div>
-
-    </div>
+        </section>
+    </main>
 </body>
 </html>

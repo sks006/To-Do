@@ -1,13 +1,16 @@
 /** @format */
+import { jsPDF } from "jspdf";
+const doc = new jsPDF();
 
 const taskForm = document.getElementById("new-task-form");
 const shortTermTasks = document.querySelector("#short-term-tasks .task-list");
 const longTermTasks = document.querySelector("#long-term-tasks .task-list");
+const generatePdfBtn = document.querySelector(".generate-btn");
 
-let tasks = JSON.parse(localStorage.getItem("taskManager_tasks")) || [];
+let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 
 function saveTasks() {
-     localStorage.setItem("taskManager_tasks", JSON.stringify(tasks));
+     localStorage.setItem("tasks", JSON.stringify(tasks));
 }
 
 
@@ -146,7 +149,45 @@ taskForm.onsubmit = function (event) {
      saveTasks();
      renderTasks();
      taskForm.reset();
-     taskForm.onsubmit = addTask; // Reset handler
+     taskForm.onsubmit = addTask; 
 };
 
 renderTasks();
+
+
+
+// 📌 PDF Generation Function
+function generatePDF() {
+    const doc = new jsPDF();
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(16);
+    doc.text("To-Do List", 10, 10);
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(12);
+
+    let y = 20; // Initial Y position for text
+
+    tasks.forEach((task, index) => {
+        if (y > 270) {
+            doc.addPage(); // Add new page if content exceeds the limit
+            y = 10;
+        }
+        doc.text(
+            `${index + 1}. ${task.name} (${task.category}) - Due: ${task.dueDate}`,
+            10,
+            y
+        );
+        if (task.notes) {
+            doc.text(`   Notes: ${task.notes}`, 10, y + 6);
+            y += 10;
+        } else {
+            y += 8;
+        }
+    });
+
+    doc.save("To-Do-List.pdf");
+}
+
+// 📌 Attach Event Listener to Generate PDF Button
+generatePdfBtn.addEventListener("click", generatePDF);
